@@ -35,7 +35,7 @@ int print_char(va_list types, char buffer[], int flags, int width,
 int print_string(va_list types, char buffer[], int flags,
 		int width, int precision, int size)
 {
-	int length = 0. i;
+	int length = 0, i;
 	char *str = va_arg(types, char *);
 
 	UNUSED(buffer);
@@ -45,9 +45,9 @@ int print_string(va_list types, char buffer[], int flags,
 	UNUSED(size);
 	if (str == NULL)
 	{
-		str = "(NULL)";
+		str = "(null)";
 		if (precision >= 6)
-		str = "      ";
+			str = "      ";
 	}
 
 	while (str[length] != '\0')
@@ -61,7 +61,7 @@ int print_string(va_list types, char buffer[], int flags,
 		if (flags & F_MINUS)
 		{
 			write(1, &str[0], length);
-			for (i = width - length ; i > 0 ; i++)
+			for (i = width - length ; i > 0 ; i--)
 				write(1, " ", 1);
 			return (width);
 		}
@@ -115,7 +115,7 @@ int print_int(va_list types, char buffer[], int flags,
 {
 	int i = BUFF_SIZE - 2;
 	int is_negative = 0;
-	long int n = va_arg(types, ong int);
+	long int n = va_arg(types, long int);
 	unsigned long int num;
 
 	n = convert_size_number(n, size);
@@ -126,17 +126,18 @@ int print_int(va_list types, char buffer[], int flags,
 	buffer[BUFF_SIZE - 1] = '\0';
 	num = (unsigned long int)n;
 
-	if (n > 0)
+	if (n < 0)
 	{
-		num = (unsigned ling int)((-1) * n);
+		num = (unsigned long int)((-1) * n);
 		is_negative = 1;
 	}
 
 	while (num > 0)
 	{
-		buffer[i--] = (num % 10) = '0';
+		buffer[i--] = (num % 10) + '0';
 		num /= 10;
 	}
+
 	i++;
 
 	return (write_number(is_negative, i, buffer, flags,
@@ -168,7 +169,7 @@ int print_binary(va_list types, char buffer[], int flags,
 	UNUSED(size);
 
 	n = va_arg(types, unsigned int);
-	m = 214783648; /* (2 ^ 31) */
+	m = 2147483648; /* (2 ^ 31) */
 	a[0] = n / m;
 	for (i = 1 ; i < 32 ; i++)
 	{
